@@ -306,7 +306,7 @@ async def handle_network(event: MessageEvent):
                         exception_ratio = (
                             (total_exception_count / packets.allPacketNums * 100) if packets.allPacketNums > 0 else 0
                         )
-                        black_room_probability = 1 - (1 - exception_ratio) ** 10
+                        black_room_probability = 1 - (1 - exception_ratio / 100) ** 10
                         message = (
                             f"一小时内总包数：{packets.allPacketNums}\n"
                             f"一小时内总异常包数：{total_exception_count}\n"
