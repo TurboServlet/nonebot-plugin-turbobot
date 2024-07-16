@@ -3,6 +3,10 @@
 
 Turbo Bot 是一个为 Turbo 用户提供指令服务的 Nonebot 插件。通过该插件，用户可以进行设置和管理用户功能票等操作。
 
+## 归属
+
+该项目为TurboServlet项目组所有。© TurboServlet 2024。保留所有权利。显示的所有内容、标识和服务标记如若侵权，请联系我们 ctrlcvs@uwu.cat。
+
 ## 功能
 
 - 绑定和解绑用户的 botToken
