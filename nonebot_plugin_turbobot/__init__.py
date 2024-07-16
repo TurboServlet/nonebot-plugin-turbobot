@@ -30,6 +30,7 @@ from pydantic import ValidationError
 from .config import Config
 from .libraries.db_utils import bind_user, get_bot_key, is_already_bound, unbind_user
 from .network.models import Packets, ResponseData
+from .permission.models import UserPermission
 
 plugin_config = Config()
 
@@ -51,6 +52,7 @@ unbind = on_command('unbind', priority=5)
 network = on_command('network', priority=5)
 authorize = on_command('authorize', aliases={'授权'}, priority=5)
 deauthorize = on_command('deauthorize', aliases={'解除授权'}, priority=5)
+show_permission = on_command('showPermission', aliases={'permission', '获取权限', '展示权限', '权限'}, priority=5)
 
 
 @bind.handle()
@@ -409,6 +411,44 @@ async def handle_deauthorize(event: MessageEvent, arg: Message = CommandArg()):
             await deauthorize.send(f"解除授权用户失败，HTTP响应状态码为{response.status_code}。")
     except Exception as e:
         await deauthorize.send(f"解除授权用户过程中出现错误：{e}")
+
+
+@show_permission.handle()
+async def handle_show_permission(event: MessageEvent):
+    """
+    @Author: TurboServlet
+    @Func: handle_show_permission()
+    @Description: 处理用户获取权限操作
+    @Param {MessageEvent} event: 消息事件
+    """
+    qqid = str(event.get_user_id())
+
+    bot_key = get_bot_key(qqid)
+    if not bot_key:
+        await handle_show_permission.send("您尚未绑定，请先绑定。")
+        return
+
+    headers = {"Authorization": f"BotKey {bot_key}"}
+
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(f'{plugin_config.api_base_url}/permission/showUserPermission', headers=headers)
+
+        if response.status_code == 200:
+            try:
+                response_data = UserPermission(**response.json())
+                if response_data.isSuccess:
+                    permission_level = response_data.get_permission_level()
+                    message = f"用户权限级别：{permission_level}"
+                    await handle_show_permission.send(message)
+                else:
+                    await handle_show_permission.send("获取用户权限失败，返回响应中 isSuccess 为 false。")
+            except ValidationError as e:
+                await handle_show_permission.send(f"解析用户权限数据时出现错误：{e}")
+        else:
+            await handle_show_permission.send(f"获取用户权限失败，HTTP 响应状态码为 {response.status_code}。")
+    except Exception as e:
+        await handle_show_permission.send(f"获取用户权限过程中出现错误：{e}")
 
 
 def get_ticket_description(ticket_id: int) -> str:
