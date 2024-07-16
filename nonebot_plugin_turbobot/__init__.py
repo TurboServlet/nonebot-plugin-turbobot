@@ -15,7 +15,12 @@ from nonebot import (
     on_regex,
     require,
 )
-from nonebot.adapters.qq import Bot, Message, MessageEvent, MessageSegment
+from nonebot.adapters.qq import (  # type: ignore
+    Bot,
+    Message,
+    MessageEvent,
+    MessageSegment,
+)
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg, Endswith, RegexGroup, RegexMatched
 from nonebot.permission import SUPERUSER
@@ -44,6 +49,8 @@ remove_ticket = on_command('removeTicket', aliases={'removeticket'}, priority=5)
 bind = on_command('bind', priority=5)
 unbind = on_command('unbind', priority=5)
 network = on_command('network', priority=5)
+authorize = on_command('authorize', aliases={'授权'}, priority=5)
+deauthorize = on_command('deauthorize', aliases={'解除授权'}, priority=5)
 
 
 @bind.handle()
@@ -324,6 +331,84 @@ async def handle_network(event: MessageEvent):
             await network.send(f"获取网络数据失败，HTTP 响应状态码为 {response.status_code}。")
     except Exception as e:
         await network.send(f"获取网络数据过程中出现错误：{e}")
+
+
+@authorize.handle()
+async def handle_authorize(event: MessageEvent, arg: Message = CommandArg()):
+    """
+    @Author: TurboServlet
+    @Func: handle_authorize()
+    @Description: 处理授权用户操作
+    @Param {MessageEvent} event: 消息事件
+    @Param {Message} arg: 命令参数
+    """
+    qqid = str(event.get_user_id())
+    username = str(arg).strip()
+
+    if not username:
+        await authorize.send("未输入用户名，请重新输入。")
+        return
+
+    bot_key = get_bot_key(qqid)
+    if not bot_key:
+        await authorize.send("您尚未绑定，请先绑定。")
+        return
+
+    payload = {"changeUsername": username}
+
+    headers = {"Authorization": f"BotKey {bot_key}"}
+
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f'{plugin_config.api_base_url}/permission/authorizeuser', json=payload, headers=headers
+            )
+
+        if response.status_code == 200:
+            await authorize.send(f"成功授权用户：{username}")
+        else:
+            await authorize.send(f"授权用户失败，HTTP响应状态码为{response.status_code}。")
+    except Exception as e:
+        await authorize.send(f"授权用户过程中出现错误：{e}")
+
+
+@deauthorize.handle()
+async def handle_deauthorize(event: MessageEvent, arg: Message = CommandArg()):
+    """
+    @Author: TurboServlet
+    @Func: handle_authorize()
+    @Description: 处理解除授权用户操作
+    @Param {MessageEvent} event: 消息事件
+    @Param {Message} arg: 命令参数
+    """
+    qqid = str(event.get_user_id())
+    username = str(arg).strip()
+
+    if not username:
+        await deauthorize.send("未输入用户名，请重新输入。")
+        return
+
+    bot_key = get_bot_key(qqid)
+    if not bot_key:
+        await deauthorize.send("您尚未绑定，请先绑定。")
+        return
+
+    payload = {"changeUsername": username}
+
+    headers = {"Authorization": f"BotKey {bot_key}"}
+
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f'{plugin_config.api_base_url}/permission/deauthorizeuser', json=payload, headers=headers
+            )
+
+        if response.status_code == 200:
+            await deauthorize.send(f"成功解除授权用户：{username}")
+        else:
+            await deauthorize.send(f"解除授权用户失败，HTTP响应状态码为{response.status_code}。")
+    except Exception as e:
+        await deauthorize.send(f"解除授权用户过程中出现错误：{e}")
 
 
 def get_ticket_description(ticket_id: int) -> str:
