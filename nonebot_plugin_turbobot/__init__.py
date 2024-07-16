@@ -363,7 +363,7 @@ async def handle_authorize(event: MessageEvent, arg: Message = CommandArg()):
     try:
         async with httpx.AsyncClient() as client:
             response = await client.post(
-                f'{plugin_config.api_base_url}/permission/authorizeuser', json=payload, headers=headers
+                f'{plugin_config.api_base_url}/permission/authorizeUser', json=payload, headers=headers
             )
 
         if response.status_code == 200:
@@ -402,7 +402,7 @@ async def handle_deauthorize(event: MessageEvent, arg: Message = CommandArg()):
     try:
         async with httpx.AsyncClient() as client:
             response = await client.post(
-                f'{plugin_config.api_base_url}/permission/deauthorizeuser', json=payload, headers=headers
+                f'{plugin_config.api_base_url}/permission/deauthorizeUser', json=payload, headers=headers
             )
 
         if response.status_code == 200:
