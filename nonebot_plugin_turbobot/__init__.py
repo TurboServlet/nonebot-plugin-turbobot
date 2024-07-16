@@ -425,7 +425,7 @@ async def handle_show_permission(event: MessageEvent):
 
     bot_key = get_bot_key(qqid)
     if not bot_key:
-        await handle_show_permission.send("您尚未绑定，请先绑定。")
+        await show_permission.send("您尚未绑定，请先绑定。")
         return
 
     headers = {"Authorization": f"BotKey {bot_key}"}
@@ -440,15 +440,15 @@ async def handle_show_permission(event: MessageEvent):
                 if response_data.isSuccess:
                     permission_level = response_data.get_permission_level()
                     message = f"用户权限级别：{permission_level}"
-                    await handle_show_permission.send(message)
+                    await show_permission.send(message)
                 else:
-                    await handle_show_permission.send("获取用户权限失败，返回响应中 isSuccess 为 false。")
+                    await show_permission.send("获取用户权限失败，返回响应中 isSuccess 为 false。")
             except ValidationError as e:
-                await handle_show_permission.send(f"解析用户权限数据时出现错误：{e}")
+                await show_permission.send(f"解析用户权限数据时出现错误：{e}")
         else:
-            await handle_show_permission.send(f"获取用户权限失败，HTTP 响应状态码为 {response.status_code}。")
+            await show_permission.send(f"获取用户权限失败，HTTP 响应状态码为 {response.status_code}。")
     except Exception as e:
-        await handle_show_permission.send(f"获取用户权限过程中出现错误：{e}")
+        await show_permission.send(f"获取用户权限过程中出现错误：{e}")
 
 
 def get_ticket_description(ticket_id: int) -> str:
