@@ -14,7 +14,7 @@ Turbo Bot 是一个为 Turbo 用户提供指令服务的 Nonebot 插件。通过
 
 1. 克隆此仓库到你的本地机器：
     ```sh
-    git clone https://github.com/TurboServlet/nonebot2-plugin-turbobot.git
+    git clone https://github.com/TurboServlet/nonebot-plugin-turbobot.git
     ```
 
 2. 将插件文件夹放入 Nonebot 目录下的 plugins 文件夹中
