@@ -25,13 +25,8 @@ Turbo Bot 是一个为 Turbo 用户提供指令服务的 Nonebot 插件。通过
 
 ## 使用方法
 
-- 使用 `/bind` 指令绑定，后面跟上你的 botToken。
-- 使用 `/unbind` 指令解绑。
-- 使用 `/setName` 指令修改你的名称，后面跟上新的名称。
-- 使用 `/removeName` 指令删除你修改的名称。
-- 使用 `/setTicket` 指令锁定你的用户功能票，后面跟上 ticketId。
-- 使用 `/removeTicket` 指令删除你的用户功能票锁定。
-- 使用 `/network` 指令获取网络数据。
+- 使用 `/help` 获取指令列表
+
 
 ## 许可证
 
